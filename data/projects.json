@@ -1,0 +1,63 @@
+[
+  {
+    "id": "announc",
+    "slug": "announc",
+    "name": "Announc+",
+    "description": "Give your server a voice. Customizable announcements with chat broadcasts, titles, sounds, boss bars, and reusable presets.",
+    "category": "Minecraft Plugins",
+    "categories": [
+      "Minecraft Plugins",
+      "Minecraft Mods"
+    ],
+    "logo": "/assets/announc.webp",
+    "repository": null,
+    "modrinthId": "3ZoQg4i7",
+    "versionFallback": null,
+    "platforms": [
+      "Paper",
+      "Purpur",
+      "Spigot",
+      "Folia",
+      "Bukkit",
+      "Fabric"
+    ],
+    "status": "Active",
+    "featured": true,
+    "published": true,
+    "documentationEnabled": true,
+    "issuesEnabled": false,
+    "minecraft": true,
+    "docs": [
+      {
+        "slug": "introduction",
+        "title": "Complete project guide",
+        "file": "content/announc/introduction.md"
+      },
+      {
+        "slug": "installation",
+        "title": "Installation",
+        "file": "content/announc/installation.md"
+      },
+      {
+        "slug": "commands",
+        "title": "Commands",
+        "file": "content/announc/commands.md"
+      },
+      {
+        "slug": "permissions",
+        "title": "Permissions",
+        "file": "content/announc/permissions.md"
+      },
+      {
+        "slug": "configuration",
+        "title": "Configuration",
+        "file": "content/announc/configuration.md"
+      },
+      {
+        "slug": "compatibility",
+        "title": "Compatibility",
+        "file": "content/announc/compatibility.md"
+      }
+    ]
+  }
+]

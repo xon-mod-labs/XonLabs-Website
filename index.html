@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Announc+ | Live Statistics</title>
+<style>
+:root{color-scheme:dark;--bg:#090d16;--panel:#141b2a;--line:#293246;--text:#f1f5ff;--muted:#9daac1;--accent:#8b78ff;--green:#4ade80}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#242045 0%,transparent 45%),var(--bg);font-family:Inter,system-ui,Arial,sans-serif;color:var(--text)}main{max-width:1120px;margin:auto;padding:42px 20px 70px}header,.head{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:15px}.logo{height:56px;width:56px;border-radius:15px;background:linear-gradient(135deg,#8b78ff,#4e3da3);display:grid;place-items:center;font-weight:900;font-size:26px;overflow:hidden}.logo img{height:100%;width:100%;object-fit:cover}h1{margin:0;font-size:30px}h2{font-size:19px;margin:0 0 16px}p{color:var(--muted);margin:7px 0}a{color:inherit;text-decoration:none}.actions{display:flex;gap:10px}button,.btn{cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:11px 16px;background:#20283a;color:var(--text);font:inherit}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}button:hover,.btn:hover{filter:brightness(1.15)}.status{display:flex;align-items:center;gap:9px;margin:28px 0 18px;color:var(--muted);font-size:13px}.dot{width:8px;height:8px;border-radius:50%;background:var(--green)}.dot.error{background:#fb7185}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card,.panel{background:rgba(20,27,42,.92);border:1px solid var(--line);border-radius:16px;padding:22px}.card .label{color:var(--muted);font-size:13px}.card .number{font-size:31px;font-weight:750;margin-top:14px;overflow-wrap:anywhere}.layout{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:16px}.panel{min-width:0}.sub{color:var(--muted);font-size:13px}.barrow{display:grid;grid-template-columns:minmax(95px,1fr) 3fr 70px;align-items:center;gap:12px;margin:14px 0;font-size:13px}.track{height:10px;border-radius:8px;background:#273044;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#6557df,#a997ff);border-radius:8px}.right{text-align:right;color:var(--muted)}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.chip{background:#242b40;border:1px solid #39415a;border-radius:999px;padding:6px 10px;font-size:12px}.release{padding:14px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}.release:last-child{border:0}.release strong{display:block;overflow-wrap:anywhere}.release small{color:var(--muted)}.errorbox{color:#fecdd3;background:#4b1727;border:1px solid #9f2945;border-radius:12px;padding:14px;margin-top:15px;display:none}footer{margin-top:25px;color:var(--muted);font-size:12px}@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}@media(max-width:460px){main{padding:25px 14px}.cards{grid-template-columns:1fr 1fr;gap:10px}.card{padding:16px}.card .number{font-size:24px}.actions{width:100%}.actions>*{flex:1;text-align:center}.barrow{grid-template-columns:80px 1fr 52px;gap:7px}}
+</style>
+</head>
+<body><main>
+<header><div class="brand"><div class="logo" id="logo">A+</div><div><h1 id="title">Announc+</h1><p>Modrinth analytics dashboard</p></div></div><div class="actions"><button id="refresh">↻ Refresh</button><a class="btn primary" href="https://modrinth.com/plugin/announc" target="_blank" rel="noopener">View on Modrinth ↗</a></div></header>
+<div class="status"><span class="dot" id="dot"></span><span id="status">Loading live data…</span></div>
+<section class="cards"><div class="card"><div class="label">Total downloads</div><div class="number" id="downloads">—</div></div><div class="card"><div class="label">Followers</div><div class="number" id="followers">—</div></div><div class="card"><div class="label">Published releases</div><div class="number" id="releases">—</div></div><div class="card"><div class="label">Latest release</div><div class="number" id="latest">—</div></div></section>
+<div class="errorbox" id="error" role="alert"></div>
+<div class="layout"><section class="panel"><h2>Downloads by release</h2><p class="sub">Top 8 releases by recorded downloads</p><div id="bars"><p>Loading…</p></div></section><section class="panel"><h2>Project details</h2><p class="sub">Supported loaders</p><div class="chips" id="loaders"></div><p class="sub" style="margin-top:24px">Minecraft versions</p><div class="chips" id="minecraft"></div><p class="sub" style="margin-top:24px">Last project update</p><strong id="updated">—</strong></section></div>
+<section class="panel" style="margin-top:16px"><div class="head"><h2>Recent releases</h2><span class="sub">Newest first</span></div><div id="recent"><p>Loading…</p></div></section>
+<footer>Powered by the public Modrinth API. Download counts are provided by Modrinth and do not measure unique users or active installations. Auto-refreshes every 5 minutes.</footer>
+</main>
+<script>
+const API='https://api.modrinth.com/v2/project/announc';
+const fmt=n=>Number(n??0).toLocaleString();
+const $=id=>document.getElementById(id);
+function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=String(text);return node}
+function chips(id,values){const host=$(id);host.replaceChildren();if(!values?.length){host.append(el('span','sub','Not listed'));return}for(const value of values)host.append(el('span','chip',value))}
+async function getJSON(url){const r=await fetch(url,{headers:{Accept:'application/json'},cache:'no-store'});if(!r.ok)throw Error(`Modrinth returned HTTP ${r.status}`);return r.json()}
+let busy=false;
+async function load(){if(busy)return;busy=true;$('refresh').disabled=true;$('status').textContent='Fetching live statistics…';$('dot').classList.remove('error');$('error').style.display='none';try{
+const [p,versions]=await Promise.all([getJSON(API),getJSON(API+'/version')]);
+$('title').textContent=p.title||'Announc+';document.title=(p.title||'Announc+')+' | Live Statistics';
+if(p.icon_url){const img=el('img');img.src=p.icon_url;img.alt='Project icon';$('logo').replaceChildren(img)}
+$('downloads').textContent=fmt(p.downloads);$('followers').textContent=fmt(p.followers??p.follows);$('releases').textContent=fmt(versions.length);
+const newest=[...versions].sort((a,b)=>new Date(b.date_published)-new Date(a.date_published));
+$('latest').textContent=newest[0]?.version_number||'—';$('updated').textContent=p.updated||p.date_modified?new Date(p.updated||p.date_modified).toLocaleString():'—';
+chips('loaders',p.loaders);chips('minecraft',p.game_versions);
+const top=[...versions].sort((a,b)=>b.downloads-a.downloads).slice(0,8);const max=Math.max(1,...top.map(v=>v.downloads));$('bars').replaceChildren();
+if(!top.length)$('bars').append(el('p','sub','No releases found'));
+for(const v of top){const row=el('div','barrow');row.append(el('span','',v.version_number));const track=el('div','track');const fill=el('div','fill');fill.style.width=(v.downloads/max*100)+'%';track.append(fill);row.append(track,el('span','right',fmt(v.downloads)));$('bars').append(row)}
+$('recent').replaceChildren();if(!newest.length)$('recent').append(el('p','sub','No releases found'));
+for(const v of newest.slice(0,6)){const row=el('div','release'),left=el('div'),right=el('div','right');left.append(el('strong','',v.name||v.version_number),el('small','',new Date(v.date_published).toLocaleDateString()+' · '+(v.loaders||[]).join(', ')));right.append(el('strong','',fmt(v.downloads)),el('small','',' downloads'));row.append(left,right);$('recent').append(row)}
+$('status').textContent='Live data · Updated '+new Date().toLocaleTimeString();
+}catch(err){$('dot').classList.add('error');$('status').textContent='Unable to update statistics';$('error').textContent='Could not retrieve data: '+err.message+'. Try refreshing or check that the Modrinth project is publicly accessible.';$('error').style.display='block';console.error(err)}finally{busy=false;$('refresh').disabled=false}}
+$('refresh').addEventListener('click',load);load();setInterval(()=>{if(!document.hidden)load()},300000);
+</script></body></html>

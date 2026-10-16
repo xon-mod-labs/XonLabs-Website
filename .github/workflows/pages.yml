@@ -4,11 +4,14 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+
 permissions:
   contents: read
+
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: github-pages
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,10 +24,20 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
+      - name: Verify required generated Pages routes
+        run: |
+          test -s dist/index.html
+          test -s dist/projects/announc/index.html
+          test -s dist/wiki/announc/index.html
+          test -s dist/issues/announc/index.html
+          test -s dist/discord/index.html
+          test -s dist/404.html
+          test "$(cat dist/CNAME)" = "xonlabs.xyz"
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'
         with:
           path: dist
+
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build
@@ -36,6 +49,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy
+      - uses: actions/deploy-pages@v4
         id: deployment
-        uses: actions/deploy-pages@v4

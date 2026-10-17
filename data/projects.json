@@ -10,7 +10,7 @@
       "Minecraft Mods"
     ],
     "logo": "/assets/announc.webp",
-    "repository": null,
+    "repository": "xon-mod-labs/XonLabs-Website",
     "modrinthId": "3ZoQg4i7",
     "versionFallback": null,
     "platforms": [
@@ -25,7 +25,7 @@
     "featured": true,
     "published": true,
     "documentationEnabled": true,
-    "issuesEnabled": false,
+    "issuesEnabled": true,
     "minecraft": true,
     "docs": [
       {

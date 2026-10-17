@@ -20,5 +20,5 @@ test('Pages routes, domain, logo, Discord and fallback are generated',async()=>{
  assert.equal((await readFile('dist/CNAME','utf8')).trim(),'xonlabs.xyz');
  assert.match(await readFile('dist/discord/index.html','utf8'),/http-equiv="refresh" content="0;url=https:\/\/discord.gg\/tzB3pJt6Zg"/);
  assert.match(await readFile('dist/404.html','utf8'),/id="issue-fallback"/);
- const config=JSON.parse(await readFile('dist/data/config.json'));assert.equal(config.projects[0].modrinthId,'3ZoQg4i7');assert.equal(config.projects[0].repository,null);
+ const config=JSON.parse(await readFile('dist/data/config.json'));assert.equal(config.projects[0].modrinthId,'3ZoQg4i7');assert.equal(config.projects[0].repository,'xon-mod-labs/XonLabs-Website');assert.equal(config.projects[0].issuesEnabled,true);
 });
